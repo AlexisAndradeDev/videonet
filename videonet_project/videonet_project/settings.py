@@ -9,10 +9,13 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-# TODO: Create different settings for each environment (dev, test, production)
-
 from pathlib import Path
 from azure.storage.blob import BlobServiceClient
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-u#ytx*=oscx1nvj1pvo$%#8oq1_@xwp@cw)5lixbgt-+i(yit6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == "True"
 
 ALLOWED_HOSTS = []
 
@@ -81,9 +84,9 @@ WSGI_APPLICATION = 'videonet_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'videonet',
-        'USER': 'root',
-        'PASSWORD': 'pass',
+        'NAME': os.getenv("MYSQL_DATABASE"),
+        'USER': os.getenv("MYSQL_USER"),
+        'PASSWORD': os.getenv("MYSQL_PASSWORD"),
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -136,15 +139,15 @@ STORAGES = {
     "default": {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
-            "connection_string": "your_connection_string",
-            "azure_container": "videos",
+            "connection_string": os.getenv('AZURE_CONNECTION_STRING', 'your_connection_string'),
+            "azure_container": os.getenv('AZURE_CONTAINER', 'videos'),
         }
     },
     "staticfiles": { 
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
-            "connection_string": "your_connection_string",
-            "azure_container": "videos",
+            "connection_string": os.getenv('AZURE_CONNECTION_STRING', 'your_connection_string'),
+            "azure_container": os.getenv('AZURE_CONTAINER', 'videos'),
         }
     },
 }
