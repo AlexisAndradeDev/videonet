@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 
 # Cargar las variables de entorno desde .env
 load_dotenv()
+USE_AZURE = os.getenv('USE_AZURE', 'False') == 'True'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,14 +81,13 @@ WSGI_APPLICATION = 'videonet_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# TODO: Make different databases for each environment.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv("MYSQL_DATABASE"),
         'USER': os.getenv("MYSQL_USER"),
         'PASSWORD': os.getenv("MYSQL_PASSWORD"),
-        'HOST': 'localhost',
+        'HOST': 'db' if os.getenv('_IN_DOCKER', 'False') == 'True' else 'localhost',
         'PORT': '3306',
     }
 }
@@ -135,19 +135,30 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Azure Storage
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.azure_storage.AzureStorage",
-        "OPTIONS": {
-            "connection_string": os.getenv('AZURE_CONNECTION_STRING', 'your_connection_string'),
-            "azure_container": os.getenv('AZURE_CONTAINER', 'videos'),
-        }
-    },
-    "staticfiles": { 
-        "BACKEND": "storages.backends.azure_storage.AzureStorage",
-        "OPTIONS": {
-            "connection_string": os.getenv('AZURE_CONNECTION_STRING', 'your_connection_string'),
-            "azure_container": os.getenv('AZURE_CONTAINER', 'videos'),
-        }
-    },
-}
+
+if USE_AZURE:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.azure_storage.AzureStorage",
+            "OPTIONS": {
+                "connection_string": os.getenv('AZURE_CONNECTION_STRING'),
+                "azure_container": os.getenv('AZURE_CONTAINER'),
+            }
+        },
+        "staticfiles": { 
+            "BACKEND": "storages.backends.azure_storage.AzureStorage",
+            "OPTIONS": {
+                "connection_string": os.getenv('AZURE_CONNECTION_STRING'),
+                "azure_container": os.getenv('AZURE_CONTAINER'),
+            }
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }

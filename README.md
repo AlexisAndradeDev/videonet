@@ -19,7 +19,49 @@ VideoNet es una aplicación web para la visualización de videos, que permite a 
 
 ## Instalación
 
-docker-compose -f docker-compose.dev.yml up --build
+Antes de ejecutar docker-compose, asegúrate de que no tengas el servicio de MySQL corriendo en el puerto que mapeará el contenedor.
+
+### Plantilla de .env
+
+En el root del repositorio, crea un archivo llamado ".env". En este archivo se almacenan las variables de entorno utilizadas en los contenedores y en Django.
+
+```.env
+# MySQL
+MYSQL_DATABASE=videonet # no modificar
+MYSQL_USER=your_user
+MYSQL_PASSWORD=your_password
+MYSQL_ROOT_PASSWORD=your_root_password
+
+# Azure Storage
+USE_AZURE=True # True o False
+AZURE_CONNECTION_STRING=your_connection_string
+AZURE_CONTAINER=videos
+
+# Django
+DEBUG=True # True o False
+```
+
+### Formas de ejecución
+
+Hay dos opciones importantes al correr la aplicación.
+
+#### Azure
+
+En .env, puedes establecer `USE_AZURE=False` para que el almacenamiento de videos e imágenes sea local; para activar el almacenamiento en Azure, usa`USE_AZURE=True`.
+
+Para utilizar el almacenamiento en Azure, debes haber creado antes una Storage Account con Azure, y crea un contenedor con acceso público que tenga el nombre establecido en `AZURE_CONTAINER` en `.env`. `AZURE_CONNECTION_STRING` debe contener la cadena de conexión de tu Storage Account.
+
+#### Docker
+
+Para correr los contenedores de Docker con docker-compose, ejecuta el siguiente comando desde el root del repositorio:
+
+`docker-compose -f docker-compose.dev.yml up --build`
+
+Puedes agregar el argumento --detach para correr los contenedores en el fondo.
+
+Para correr la aplicación sin contenedores, ejecuta el siguiente comando desde el root del repositorio:
+
+`python videonet_project/manage.py makemigrations && python videonet_project/manage.py migrate && python videonet_project/manage.py runserver`
 
 ## Contribuciones
 

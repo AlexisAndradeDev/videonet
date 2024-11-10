@@ -19,7 +19,7 @@ def video_detail(request, pk):
     videos = Video.objects.all()
     video = get_object_or_404(Video, pk=pk)
     return render(request, "video_manager/video_detail.html", {
-        "video": video, "videos": videos,
+        "video": video, "videos": videos.order_by('-id')[:5],
     })
 
 def create_video(request):
