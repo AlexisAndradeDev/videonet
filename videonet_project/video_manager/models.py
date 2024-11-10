@@ -3,10 +3,8 @@ from azure.storage.blob import BlobServiceClient
 from django.conf import settings
 import uuid
 import os
-
 from lib.azure.blob_storage import delete_blob
 
-# Create your models here.
 class Video(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -16,55 +14,96 @@ class Video(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     def delete(self, *args, **kwargs):
-        """Override the delete method to remove file from Azure Blob Storage
-        when the instance of the model is deleted."""
-        if not settings.USE_AZURE:
-            super().delete(*args, **kwargs)
-            return
+        """Override the delete method to remove files from Azure Blob Storage
+        when the instance of the model is deleted.
         
-        if self._delete_blob_from_storage(self.video_file.name):
-            # the blob must be succesfully deleted in order to delete the 
-            # instance from the database
-            super().delete(*args, **kwargs)
-    
-    def save(self, *args, **kwargs):
-        """Override the save method to delete the previous file if it's changed."""
-        # Change filename to a unique hash
-        if not settings.USE_AZURE:
-            self.video_file.name = self._generate_unique_filename()
-            if self.thumbnail.name:
-                self.thumbnail.name = self._generate_unique_filename()
-            super().save(*args, **kwargs)
-            return
-                
-        if self.pk: # if the object already exists
-            old_video = Video.objects.get(pk=self.pk)
-            can_be_saved = True
+        If there's an error when trying to delete some file, the register
+        is deleted from the database anyway. This way, the user can delete
+        videos from the database even if there's a problem with Azure Blob
+        Storage, and remaining files would have to be deleted manually."""
+        if self.thumbnail.name:
+            # Delete thumbnail file
+            if settings.USE_AZURE:
+                self._delete_blob_from_storage(self.thumbnail.name)
+            else:
+                try:
+                    self.thumbnail.delete(save=False)
+                except:
+                    pass
 
-            # Not the same video file
-            if self.video_file.name != old_video.video_file.name:
-                # Replace video
-                if not self._delete_blob_from_storage(old_video.video_file.name):
-                    self.video_file.name = self._generate_unique_filename()
-                    can_be_saved = False
-
-            # Not the same thumbnail file
-            if can_be_saved and self.thumbnail.name != old_video.thumbnail.name:
-                # Replace thumbnail
-                if not self._delete_blob_from_storage(old_video.thumbnail.name):
-                    self.thumbnail.name = self._generate_unique_filename()
-                    can_be_saved = False
-
-            if can_be_saved:
-                super().save(*args, **kwargs)
+        # Delete video file
+        if settings.USE_AZURE:
+            self._delete_blob_from_storage(self.video_file.name)
         else:
-            super().save(*args, **kwargs)
+            try:
+                self.video_file.delete(save=False)
+            except:
+                pass
 
-    def _generate_unique_filename(self):
-        """Returns a unique filename."""
-        filename = uuid.uuid4().hex[:30]
+        super().delete(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        """Override the save method to update or create, managing files in Azure/Local storage."""
+        if self.pk:
+            self._update(*args, **kwargs)
+        else:
+            self._create(*args, **kwargs)
+
+    def _update(self, *args, **kwargs):
+        """Deletes the old files and creates the new ones in Azure/Local storage.
+        
+        If there's an error when trying to delete some file, the register
+        is updated in the database anyway. This way, the user can update
+        videos even if there's a problem with Azure Blob Storage, and remaining
+        files would have to be deleted manually."""
+        old_video = Video.objects.get(pk=self.pk)
+        
+        upload_thumbnail_name, old_thumbnail_name = self.thumbnail.name, old_video.thumbnail.name
+
+        # Not the same thumbnail file
+        if old_thumbnail_name: # Delete blob only if a thumbnail existed
+            if upload_thumbnail_name != old_thumbnail_name:
+                # Replace thumbnail
+                if settings.USE_AZURE:
+                    self._delete_blob_from_storage(old_thumbnail_name)
+                else:
+                    try:
+                        old_video.thumbnail.delete(save=False)
+                    except Exception as e:
+                        print(f"Failed to delete file '{old_thumbnail_name}' from Local Storage: {e}")
+
+        upload_video_name, old_video_name = self.video_file.name, old_video.video_file.name
+
+        # Not the same video file
+        if upload_video_name != old_video_name:
+            # Replace video
+            if settings.USE_AZURE:
+                self._delete_blob_from_storage(old_video_name)
+            else:
+                try:
+                    old_video.video_file.delete(save=False)
+                except Exception as e:
+                    print(f"Failed to delete file '{old_video_name}' from Local Storage: {e}")
+
+        if upload_video_name != old_video_name:
+            self.video_file.name = self._generate_unique_filename(upload_video_name)
+        if upload_thumbnail_name != old_thumbnail_name:
+            self.thumbnail.name = self._generate_unique_filename(upload_thumbnail_name)
+        super().save(*args, **kwargs)
+
+    def _create(self, *args, **kwargs):
+        # Generate unique names for new files
+        self.video_file.name = self._generate_unique_filename(self.video_file.name)
+        if self.thumbnail.name:
+            self.thumbnail.name = self._generate_unique_filename(self.thumbnail.name)
+        super().save(*args, **kwargs)
+
+    def _generate_unique_filename(self, original_filename):
+        """Returns a unique filename with the original extension."""
+        extension = os.path.splitext(original_filename)[1]
+        filename = uuid.uuid4().hex[:30] + extension
         return filename
 
     def _delete_blob_from_storage(self, file_name: str) -> bool:

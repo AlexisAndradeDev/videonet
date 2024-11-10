@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +144,8 @@ if USE_AZURE:
             "OPTIONS": {
                 "connection_string": os.getenv('AZURE_CONNECTION_STRING'),
                 "azure_container": os.getenv('AZURE_CONTAINER'),
+                "upload_max_conn": 5,
+                "timeout": 60,
             }
         },
         "staticfiles": { 
@@ -150,6 +153,8 @@ if USE_AZURE:
             "OPTIONS": {
                 "connection_string": os.getenv('AZURE_CONNECTION_STRING'),
                 "azure_container": os.getenv('AZURE_CONTAINER'),
+                "upload_max_conn": 5,
+                "timeout": 60,
             }
         },
     }
