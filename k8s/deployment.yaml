@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: videonet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: videonet
+  template:
+    metadata:
+      labels:
+        app: videonet
+    spec:
+      containers:
+      - name: web
+        image: videonet:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MYSQL_DATABASE
+          value: "videonet"
+        - name: MYSQL_USER
+          value: "root"
+        - name: MYSQL_PASSWORD
+          value: "pass"
+        - name: DEBUG
+          value: "False"
+        - name: _IN_DOCKER # no modificar
+          value: "True"
