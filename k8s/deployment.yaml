@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: videonet:latest
+        image: alexisandradedev/videonet:latest
         ports:
         - containerPort: 8000
         env:
