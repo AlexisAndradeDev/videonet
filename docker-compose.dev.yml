@@ -24,5 +24,6 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - DEBUG=${DEBUG}
       - _IN_DOCKER=True
+      - MYSQL_HOST=db
     depends_on:
       - db

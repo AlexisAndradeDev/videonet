@@ -3,7 +3,7 @@ from azure.storage.blob import BlobServiceClient
 from django.conf import settings
 import uuid
 import os
-from lib.azure.blob_storage import delete_blob
+from util.azure.blob_storage import delete_blob
 
 class Video(models.Model):
     title = models.CharField(max_length=200)
