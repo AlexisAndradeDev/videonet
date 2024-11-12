@@ -10,7 +10,7 @@ COPY videonet_project/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el resto de la aplicación
-COPY videonet_project/* .
+COPY videonet_project /app/videonet_project
 
 # Copiar el script de entrada y hacerlo ejecutable
 COPY entrypoint.sh /entrypoint.sh

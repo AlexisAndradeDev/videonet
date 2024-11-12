@@ -19,6 +19,22 @@ VideoNet es una aplicación web para la visualización de videos, que permite a 
 
 ## Instalación
 
+### Kind
+
+`sudo kind create cluster --name videonet-cluster && sudo kubectl apply -f k8s/deployment.yaml && sudo kubectl apply -f k8s/service.yaml && sudo kubectl apply -f k8s/mysql-deployment.yaml && sudo kubectl apply -f k8s/mysql-service.yaml`
+
+Eliminar el cluster: `sudo kind delete cluster --name videonet-cluster`
+
+Acceder al cluster: `sudo kubectl run -i --tty --rm debug --image=alpine -- sh`. Puedes ejecutar comandos como curl dentro.
+
+#### Entrar desde el navegador
+
+Para acceder a la aplicación desde afuera del cluster, primero encuentra la IP del nodo: `kubectl get nodes -o wide`. La IP es `INTERNAL_IP`.
+
+Entra en tu navegador a http://`<INTERNAL_IP>`:30000.
+
+### Compose
+
 Antes de ejecutar docker-compose, asegúrate de que no tengas el servicio de MySQL corriendo en el puerto que mapeará el contenedor.
 
 ### Plantilla de .env

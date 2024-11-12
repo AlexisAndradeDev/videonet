@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Esperar a que la base de datos esté lista
-while ! nc -z db 3306; do
+while ! nc -z mysql 3306; do
   echo "Esperando a que la base de datos esté lista..."
   sleep 1
 done
