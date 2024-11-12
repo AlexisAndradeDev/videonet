@@ -23,15 +23,25 @@ VideoNet es una aplicación web para la visualización de videos, que permite a 
 
 `sudo kind create cluster --name videonet-cluster && sudo kubectl apply -f k8s/deployment.yaml && sudo kubectl apply -f k8s/service.yaml && sudo kubectl apply -f k8s/mysql-deployment.yaml && sudo kubectl apply -f k8s/mysql-service.yaml`
 
+Una vez que los servicios estén corriendo, comprobable con `kubectl get pods` (Running), puedes ingresar al sitio web.
+
 Eliminar el cluster: `sudo kind delete cluster --name videonet-cluster`
 
 Acceder al cluster: `sudo kubectl run -i --tty --rm debug --image=alpine -- sh`. Puedes ejecutar comandos como curl dentro.
 
 #### Entrar desde el navegador
 
+#### Opción 1
+
 Para acceder a la aplicación desde afuera del cluster, primero encuentra la IP del nodo: `kubectl get nodes -o wide`. La IP es `INTERNAL_IP`.
 
 Entra en tu navegador a http://`<INTERNAL_IP>`:30000.
+
+#### Opción 2 (configuración problemática de WSL2)
+
+En ocasiones, puede no tenerse acceso directo desde Windows al puerto vinculado a la IP interna de WSL2. Esto puede solucionarse ejecutando `kubectl port-forward service/videonet 8000:8000`, que redirige el puerto 8000 del servicio videonet al puerto 8000 en localhost en la máquina host.
+
+Entra en tu navegador a http://localhost:8000/.
 
 ### Compose
 
