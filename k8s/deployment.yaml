@@ -31,7 +31,7 @@ spec:
         - name: MYSQL_PASSWORD
           valueFrom:
             configMapKeyRef:
-              name: app-secrets
+              name: app-config
               key: MYSQL_PASSWORD
         - name: DEBUG
           valueFrom:
