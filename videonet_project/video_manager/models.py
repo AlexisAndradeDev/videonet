@@ -4,12 +4,13 @@ from django.conf import settings
 import uuid
 import os
 from util.azure.blob_storage import delete_blob
+from django.core.validators import FileExtensionValidator
 
 class Video(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    video_file = models.FileField(upload_to="videos/")
-    thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True)
+    video_file = models.FileField(upload_to="videos/", validators=[FileExtensionValidator(['.mp4', '.avi', '.mov', '.mkv'])])
+    thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True, validators=[FileExtensionValidator(['.jpg', '.jpeg', '.png'])])
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
