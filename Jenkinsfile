@@ -2,13 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Pull') {
-            steps {
-                // Clona el repositorio
-                git 'https://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@github.com/AlexisAndradeDev/videonet.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
