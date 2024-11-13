@@ -47,6 +47,8 @@ En ocasiones, puede no tenerse acceso directo desde Windows al puerto vinculado 
 
 Entra en tu navegador a http://localhost:8000/.
 
+Para Jenkins, utiliza `kubectl port-forward service/videonet 8080:8080`.
+
 ### Compose
 
 Antes de ejecutar docker-compose, asegúrate de que no tengas el servicio de MySQL corriendo en el puerto que mapeará el contenedor.
@@ -96,6 +98,12 @@ Para correr la aplicación sin contenedores, ejecuta el siguiente comando desde 
 #### Comprobar contenido del contenedor (web)
 
 Ejecuta en la carpeta root: `docker-compose -f docker-compose.dev.yml run web sh`. Puedes ejecutar comandos como `ls` para comprobar el contenido.
+
+## Jenkins
+
+Si estás usando Kubernetes, puedes acceder a Jenkins por medio de un contenedor. Con los siguientes comandos puedes crear los recursos de Jenkins: `sudo kubectl apply -f k8s/jenkins-pvc.yaml && sudo kubectl apply -f k8s/jenkins-deployment.yaml && sudo kubectl apply -f k8s/jenkins-service.yaml`.
+
+Ahora puedes entrar con http://localhost:30001, que te llevará a la interfaz de Jenkins. Si la página se muestra como no encontrada, una solución pude ser `kubectl port-forward service/videonet 8080:8080` y entrar a http://localhost:8080. La primera vez que accedas, necesitarás desbloquear Jenkins. Ejecuta este comando para encontrar la contraseña: `kubectl exec -it <jenkins-pod-name> -- cat /var/jenkins_home/secrets/initialAdminPassword`. El nombre del pod puedes obtenerlo con `kubectl get pods`.
 
 ## Contribuciones
 
