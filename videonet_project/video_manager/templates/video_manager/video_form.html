@@ -11,18 +11,30 @@
     <div class="form-group">
         <label class="form-label">{{ form.title.label_tag }}*</label>
         {{ form.title|add_class:"form-control" }}
+        {% if form.title.errors %}
+            <div class="text-danger">{{ form.title.errors }}</div>
+        {% endif %}
     </div>
     <div class="form-group">
         <label class="form-label">{{ form.description.label_tag }}*</label>
         {{ form.description|add_class:"form-control" }}
+        {% if form.description.errors %}
+            <div class="text-danger">{{ form.description.errors }}</div>
+        {% endif %}
     </div>
     <div class="form-group">
         <label class="form-label">{{ form.video_file.label_tag }}*</label>
         {{ form.video_file|add_class:"form-control" }}
+        {% if form.video_file.errors %}
+            <div class="text-danger">{{ form.video_file.errors }}</div>
+        {% endif %}
     </div>
     <div class="form-group">
         <label class="form-label">{{ form.thumbnail.label_tag }}</label>
         {{ form.thumbnail|add_class:"form-control" }}
+        {% if form.thumbnail.errors %}
+            <div class="text-danger">{{ form.thumbnail.errors }}</div>
+        {% endif %}
     </div>
     <button type="submit" class="btn btn-primary">Guardar</button>
     <a href="{% url 'video_list' %}" class="btn btn-secondary">Cancelar</a>
