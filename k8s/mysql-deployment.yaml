@@ -17,12 +17,30 @@ spec:
         image: mysql:8.4.3
         env:
         - name: MYSQL_DATABASE
-          value: "videonet"
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_DATABASE
         - name: MYSQL_USER
-          value: "admin"
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_USER
         - name: MYSQL_PASSWORD
-          value: "password"
+          valueFrom:
+            configMapKeyRef:
+              name: app-secrets
+              key: MYSQL_PASSWORD
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DEBUG
         - name: MYSQL_ROOT_PASSWORD
-          value: "fhsdoih4378ho1783uidbefsig54o78fblu"
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_ROOT_PASSWORD
         ports:
         - containerPort: 3306
+  

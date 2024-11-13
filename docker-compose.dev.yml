@@ -1,14 +1,11 @@
 version: '3'
 
 services:
-  db:
+  mysql:
     image: mysql:8.4.3
     restart: always
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    env_file:
+      - .env
     ports:
       - "3306:3306"
 
@@ -18,12 +15,10 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    env_file:
+      - .env
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - DEBUG=${DEBUG}
       - _IN_DOCKER=True
-      - MYSQL_HOST=db
+      - MYSQL_HOST=mysql
     depends_on:
-      - db
+      - mysql

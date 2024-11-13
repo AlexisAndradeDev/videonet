@@ -19,9 +19,13 @@ VideoNet es una aplicación web para la visualización de videos, que permite a 
 
 ## Instalación
 
+### (!) Encoding incorrecto (Windows)
+
+El archivo entrypoint.sh puede ocasionar problemas si End of Line (EOL) está configurado como CRLF, que al clonar el repositorio en Windows podría guardarse con encoding CRLF. Asegúrate de cambiarlo a LF y guardar el archivo (puedes hacerlo en Visual Studio Code; en la parte inferior derecha se muestra CRLF, cámbialo a LF), o recibirás un error `web_1  | standard_init_linux.go:228: exec user process caused: no such file or directory` al ejecutar `docker-compose`.
+
 ### Kind
 
-`sudo kind create cluster --name videonet-cluster && sudo kubectl apply -f k8s/deployment.yaml && sudo kubectl apply -f k8s/service.yaml && sudo kubectl apply -f k8s/mysql-deployment.yaml && sudo kubectl apply -f k8s/mysql-service.yaml`
+`sudo kind create cluster --name videonet-cluster && sudo kubectl apply -f k8s/configmap.yaml && sudo kubectl apply -f k8s/deployment.yaml && sudo kubectl apply -f k8s/service.yaml && sudo kubectl apply -f k8s/mysql-deployment.yaml && sudo kubectl apply -f k8s/mysql-service.yaml`
 
 Una vez que los servicios estén corriendo, comprobable con `kubectl get pods` (Running), puedes ingresar al sitio web.
 
@@ -53,13 +57,13 @@ En el root del repositorio, crea un archivo llamado ".env". En este archivo se a
 
 ```.env
 # MySQL
-MYSQL_DATABASE=videonet # no modificar
-MYSQL_USER=your_user
+MYSQL_DATABASE=videonet
+MYSQL_USER=your_user # No puede usarse el usuario root
 MYSQL_PASSWORD=your_password
 MYSQL_ROOT_PASSWORD=your_root_password
 
 # Azure Storage
-USE_AZURE=True # True o False
+USE_AZURE=False # True o False
 AZURE_CONNECTION_STRING=your_connection_string
 AZURE_CONTAINER=videos
 
@@ -88,6 +92,10 @@ Puedes agregar el argumento --detach para correr los contenedores en el fondo.
 Para correr la aplicación sin contenedores, ejecuta el siguiente comando desde el root del repositorio:
 
 `python videonet_project/manage.py makemigrations && python videonet_project/manage.py migrate && python videonet_project/manage.py runserver`
+
+#### Comprobar contenido del contenedor (web)
+
+Ejecuta en la carpeta root: `docker-compose -f docker-compose.dev.yml run web sh`. Puedes ejecutar comandos como `ls` para comprobar el contenido.
 
 ## Contribuciones
 

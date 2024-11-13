@@ -19,14 +19,26 @@ spec:
         - containerPort: 8000
         env:
         - name: MYSQL_DATABASE
-          value: "videonet"
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_DATABASE
         - name: MYSQL_USER
-          value: "admin"
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_USER
         - name: MYSQL_PASSWORD
-          value: "password"
+          valueFrom:
+            configMapKeyRef:
+              name: app-secrets
+              key: MYSQL_PASSWORD
         - name: DEBUG
-          value: "False"
-        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DEBUG
+        - name: MYSQL_HOST # no modificar
           value: "mysql"
         - name: _IN_DOCKER # no modificar
           value: "True"

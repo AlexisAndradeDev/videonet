@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  MYSQL_DATABASE: videonet
+  MYSQL_USER: admin
+  DEBUG: "False"
+  USE_AZURE: "True"
+  AZURE_CONNECTION_STRING: "connection_string"
+  AZURE_CONTAINER: "videos"
+  MYSQL_PASSWORD: cGFzc3dvcmQ=
+  MYSQL_ROOT_PASSWORD: ZnRkb3U1NHM1NDVzNTQ1NDU0
