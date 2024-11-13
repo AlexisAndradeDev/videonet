@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     // Construye la imagen de Docker
-                    sh 'docker-compose -f docker-compose.dev.yml build'
+                    bat 'docker-compose -f docker-compose.dev.yml build'
                 }
             }
         }
@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // Ejecuta las pruebas de Django
-                    sh 'docker-compose -f docker-compose.dev.yml run web python videonet_project/manage.py test'
+                    bat 'docker-compose -f docker-compose.dev.yml run web python videonet_project/manage.py test'
                 }
             }
         }
@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     // Despliega la aplicación usando Docker Compose
-                    sh 'docker-compose -f docker-compose.dev.yml up -d'
+                    bat 'docker-compose -f docker-compose.dev.yml up -d'
                 }
             }
         }
