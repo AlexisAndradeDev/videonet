@@ -88,5 +88,7 @@ db.sqlite3
 
 venv/
 
-videos/
-thumbnails/
+videonet_project/videos/*
+!videonet_project/videos/test_vid.mp4
+videonet_project/thumbnails/*
+!videonet_project/thumbnails/test_img.jpg
