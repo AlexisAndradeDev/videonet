@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // Ejecuta las pruebas de Django
-                    bat 'docker-compose -f docker-compose.dev.yml run web python videonet_project/manage.py test'
+                    bat 'docker-compose -f docker-compose.dev.yml run web python videonet_project/manage.py test videonet_project/'
                 }
             }
         }
@@ -33,9 +33,11 @@ pipeline {
     post {
         success {
             echo 'Pipeline completada con éxito.'
+            bat 'docker-compose -f docker-compose.dev.yml down --remove-orphans'
         }
         failure {
             echo 'Pipeline falló.'
+            bat 'docker-compose -f docker-compose.dev.yml down --remove-orphans'
         }
     }
 }
