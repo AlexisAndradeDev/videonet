@@ -106,6 +106,8 @@ Si estás usando Kubernetes, puedes acceder a Jenkins por medio de un contenedor
 
 Ahora puedes entrar con http://localhost:30001, que te llevará a la interfaz de Jenkins. Si la página se muestra como no encontrada, una solución pude ser `kubectl port-forward service/jenkins 8080:8080` y entrar a http://localhost:8080. La primera vez que accedas, necesitarás desbloquear Jenkins. Ejecuta este comando para encontrar la contraseña: `kubectl exec -it <jenkins-pod-name> -- cat /var/jenkins_home/secrets/initialAdminPassword`. El nombre del pod puedes obtenerlo con `kubectl get pods`.
 
+Antes de ejecutar Jobs de Jenkins, asegúrate de crear el archivo `.env` en la raíz del directorio donde Jenkins ejecutará `docker-compose`.
+
 ## Contribuciones
 
 Las contribuciones son bienvenidas. Si deseas contribuir, abre un issue o envía un pull request.
