@@ -16,10 +16,13 @@
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ video.title }}</h5>
+                    <p class="card-text"><i>{{ video.user }}</i></p>
                     <p class="card-text">{{ video.description|truncatewords:20 }}</p>
                     <a href="{% url 'video_detail' video.pk %}" class="btn btn-info">Ver</a>
-                    <a href="{% url 'update_video' video.pk %}" class="btn btn-info">Editar</a>
-                    <a href="{% url 'delete_video' video.pk %}" class="btn btn-danger">Eliminar</a>
+                    {% if video.user.id == user.id %}
+                        <a href="{% url 'update_video' video.pk %}" class="btn btn-info">Editar</a>
+                        <a href="{% url 'delete_video' video.pk %}" class="btn btn-danger">Eliminar</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

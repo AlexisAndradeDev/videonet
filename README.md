@@ -8,6 +8,7 @@ VideoNet es una aplicación web para la visualización de videos, que permite a 
 - Listar todos los videos almacenados.
 - Editar la información de los videos existentes.
 - Eliminar videos de la base de datos.
+- Manejo de usuarios.
 
 ## Requisitos
 
@@ -47,7 +48,7 @@ En ocasiones, puede no tenerse acceso directo desde Windows al puerto vinculado 
 
 Entra en tu navegador a http://localhost:8000/.
 
-Para Jenkins, utiliza `kubectl port-forward service/videonet 8080:8080`.
+Para Jenkins, utiliza `kubectl port-forward service/jenkins 8080:8080`.
 
 ### Compose
 
@@ -87,7 +88,7 @@ Para utilizar el almacenamiento en Azure, debes haber creado antes una Storage A
 
 Para correr los contenedores de Docker con docker-compose, ejecuta el siguiente comando desde el root del repositorio:
 
-`docker-compose -f docker-compose.dev.yml up --build`
+`docker build . && docker-compose -f docker-compose.dev.yml up --build`
 
 Puedes agregar el argumento --detach para correr los contenedores en el fondo.
 
@@ -103,7 +104,7 @@ Ejecuta en la carpeta root: `docker-compose -f docker-compose.dev.yml run web sh
 
 Si estás usando Kubernetes, puedes acceder a Jenkins por medio de un contenedor. Con los siguientes comandos puedes crear los recursos de Jenkins: `sudo kubectl apply -f k8s/jenkins-pvc.yaml && sudo kubectl apply -f k8s/jenkins-deployment.yaml && sudo kubectl apply -f k8s/jenkins-service.yaml`.
 
-Ahora puedes entrar con http://localhost:30001, que te llevará a la interfaz de Jenkins. Si la página se muestra como no encontrada, una solución pude ser `kubectl port-forward service/videonet 8080:8080` y entrar a http://localhost:8080. La primera vez que accedas, necesitarás desbloquear Jenkins. Ejecuta este comando para encontrar la contraseña: `kubectl exec -it <jenkins-pod-name> -- cat /var/jenkins_home/secrets/initialAdminPassword`. El nombre del pod puedes obtenerlo con `kubectl get pods`.
+Ahora puedes entrar con http://localhost:30001, que te llevará a la interfaz de Jenkins. Si la página se muestra como no encontrada, una solución pude ser `kubectl port-forward service/jenkins 8080:8080` y entrar a http://localhost:8080. La primera vez que accedas, necesitarás desbloquear Jenkins. Ejecuta este comando para encontrar la contraseña: `kubectl exec -it <jenkins-pod-name> -- cat /var/jenkins_home/secrets/initialAdminPassword`. El nombre del pod puedes obtenerlo con `kubectl get pods`.
 
 ## Contribuciones
 

@@ -5,6 +5,7 @@ import uuid
 import os
 from util.azure.blob_storage import delete_blob
 from django.core.validators import FileExtensionValidator
+from django.contrib.auth.models import User
 
 class Video(models.Model):
     title = models.CharField(max_length=200)
@@ -12,6 +13,7 @@ class Video(models.Model):
     video_file = models.FileField(upload_to="videos/", validators=[FileExtensionValidator(['mp4', 'avi', 'mov', 'mkv'])])
     thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True, validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])])
     created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
