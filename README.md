@@ -61,7 +61,7 @@ En el root del repositorio, crea un archivo llamado ".env". En este archivo se a
 ```.env
 # MySQL
 MYSQL_DATABASE=videonet
-MYSQL_USER=your_user # No puede usarse el usuario root
+MYSQL_USER=your_user # No puede usarse el usuario root cuando se usa contenedor
 MYSQL_PASSWORD=your_password
 MYSQL_ROOT_PASSWORD=your_root_password
 
@@ -105,6 +105,10 @@ Ejecuta en la carpeta root: `docker-compose -f docker-compose.dev.yml run web sh
 Si estás usando Kubernetes, puedes acceder a Jenkins por medio de un contenedor. Con los siguientes comandos puedes crear los recursos de Jenkins: `sudo kubectl apply -f k8s/jenkins-pvc.yaml && sudo kubectl apply -f k8s/jenkins-deployment.yaml && sudo kubectl apply -f k8s/jenkins-service.yaml`.
 
 Ahora puedes entrar con http://localhost:30001, que te llevará a la interfaz de Jenkins. Si la página se muestra como no encontrada, una solución pude ser `kubectl port-forward service/jenkins 8080:8080` y entrar a http://localhost:8080. La primera vez que accedas, necesitarás desbloquear Jenkins. Ejecuta este comando para encontrar la contraseña: `kubectl exec -it <jenkins-pod-name> -- cat /var/jenkins_home/secrets/initialAdminPassword`. El nombre del pod puedes obtenerlo con `kubectl get pods`.
+
+Esté o no ejecutándose Jenkins como un contenedor por medio de Kubernetes, necesitas crear un archivo `.env` en el root del repositorio clonado por Jenkins, dentro de `/var/lib/jenkins/workspace/{nombre-del-job}/`. Esto es debido a que `.env` es un archivo privado, no-universal y dependiente de la configuración del usuario.
+
+El job de Jenkins para testeo debe utilizar el `Jenkinsfile` ubicado en el root del repositorio. Este `Jenkinsfile` ordena construir la imagen de Docker, correr tests de Django, iniciar todos los contenedores con `docker-compose` y finalmente detiene los contenedores.
 
 ## Contribuciones
 
