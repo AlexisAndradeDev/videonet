@@ -110,6 +110,8 @@ Esté o no ejecutándose Jenkins como un contenedor por medio de Kubernetes, nec
 
 El job de Jenkins para testeo debe utilizar el `Jenkinsfile` ubicado en el root del repositorio. Este `Jenkinsfile` ordena construir la imagen de Docker, correr tests de Django, iniciar todos los contenedores con `docker-compose` y finalmente detiene los contenedores.
 
+Si estás utilizando Windows, usa `bat` en el Jenkinsfile para ejecutar los comandos; si estás en Linux, utiliza `sh`.
+
 ## Contribuciones
 
 Las contribuciones son bienvenidas. Si deseas contribuir, abre un issue o envía un pull request.
